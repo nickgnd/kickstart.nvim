@@ -696,6 +696,7 @@ require('lazy').setup({
             },
           },
         },
+        elixirls = {},
       }
 
       -- Ensure the servers and tools above are installed
