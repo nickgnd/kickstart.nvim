@@ -696,7 +696,10 @@ require('lazy').setup({
             },
           },
         },
-        elixirls = {},
+        elixirls = {
+          dialyzerEnabled = false,
+          fetchDeps = false
+        },
       }
 
       -- Ensure the servers and tools above are installed
