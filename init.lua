@@ -593,7 +593,7 @@ require('lazy').setup({
         },
         elixirls = {
           dialyzerEnabled = false,
-          fetchDeps = false
+          fetchDeps = false,
         },
       }
 
