@@ -407,10 +407,10 @@ require('lazy').setup({
         defaults = {
           mappings = {
             i = {
-              ["<C-q>"] = require('telescope.actions').smart_send_to_qflist + require('telescope.actions').open_qflist,
-              ["<CR>"] = require('telescope.actions').select_default + require('telescope.actions').center,
-              ["<C-n>"] = require('telescope.actions').cycle_history_next,
-              ["<C-p>"] = require('telescope.actions').cycle_history_prev,
+              ['<C-q>'] = require('telescope.actions').smart_send_to_qflist + require('telescope.actions').open_qflist,
+              ['<CR>'] = require('telescope.actions').select_default + require('telescope.actions').center,
+              ['<C-n>'] = require('telescope.actions').cycle_history_next,
+              ['<C-p>'] = require('telescope.actions').cycle_history_prev,
             },
           },
         },
