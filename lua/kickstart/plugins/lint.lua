@@ -6,6 +6,8 @@ return {
     config = function()
       local lint = require 'lint'
       lint.linters_by_ft = {
+        -- NOTE: it require `markdownlint` installed locally
+        -- https://github.com/nvim-lua/kickstart.nvim/issues/980
         markdown = { 'markdownlint' },
       }
 
