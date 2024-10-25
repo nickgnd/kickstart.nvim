@@ -200,6 +200,24 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 -- vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
 -- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
 
+-- Shortcut to open same file in split
+vim.keymap.set('n', '<C-s>', '<C-w><C-v>', { desc = 'Open in vertical split' })
+
+-- Faster window resizing (10x)
+vim.keymap.set('n', '<C-w>>', '10<C-w>>', { desc = 'Increase current window width by 10' })
+vim.keymap.set('n', '<C-w><', '10<C-w><', { desc = 'Decrease current window width by 10' })
+vim.keymap.set('n', '<C-w>+', '10<C-w>+', { desc = 'Increase current window height by 10' })
+vim.keymap.set('n', '<C-w>-', '10<C-w>-', { desc = 'Decrease current window height by 10' })
+
+-- Disable yanking when delete/change/replace text
+-- Use `_` as the black hole register, when you want to delete a text without transferring it to a register.
+--
+vim.keymap.set('x', 'p', '"_dP', { desc = 'Replace without yanking' })
+vim.keymap.set('n', 'd', '"_d', { desc = 'Delete without yanking' }) -- e.g <leader>dd deletes the current line without yanking it
+vim.keymap.set('n', 'D', '"_D', { desc = 'Delete until EOL without yanking' })
+vim.keymap.set('n', 'c', '"_c', { desc = 'Change without yanking' })
+vim.keymap.set('n', 'C', '"_C', { desc = 'Change until EOL without yanking' })
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
