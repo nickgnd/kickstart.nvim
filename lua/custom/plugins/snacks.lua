@@ -44,10 +44,27 @@ return {
     quickfile = { enabled = true },
     statuscolumn = { enabled = true },
     words = { enabled = true },
+    scratch = { enabled = true },
     styles = {
       notification = {
         wo = { wrap = true }, -- Wrap notifications
       },
+    },
+  },
+  keys = {
+    {
+      '<leader>.',
+      function()
+        Snacks.scratch()
+      end,
+      desc = 'Toggle Scratch Buffer',
+    },
+    {
+      '<leader>S',
+      function()
+        Snacks.scratch.select()
+      end,
+      desc = 'Select Scratch Buffer',
     },
   },
 }
