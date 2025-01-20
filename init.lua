@@ -218,6 +218,11 @@ vim.keymap.set('n', 'D', '"_D', { desc = 'Delete until EOL without yanking' })
 vim.keymap.set('n', 'c', '"_c', { desc = 'Change without yanking' })
 vim.keymap.set('n', 'C', '"_C', { desc = 'Change until EOL without yanking' })
 
+-- Quickfix faster navigation (alt + j/k)
+--
+vim.keymap.set('n', '<M-j>', '<cmd>cnext<CR>', { desc = 'Go to the next quickfix item' })
+vim.keymap.set('n', '<M-k>', '<cmd>cprev<CR>', { desc = 'Go to the prev quickfix item' })
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
