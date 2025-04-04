@@ -16,23 +16,23 @@ return {
     contexts = {
       -- Open a file picker to select a file
       -- https://github.com/CopilotC-Nvim/CopilotChat.nvim/issues/690#issuecomment-2551162017
-      file = {
-        input = function(callback)
-          local telescope = require 'telescope.builtin'
-          local actions = require 'telescope.actions'
-          local action_state = require 'telescope.actions.state'
-          telescope.find_files {
-            attach_mappings = function(prompt_bufnr)
-              actions.select_default:replace(function()
-                actions.close(prompt_bufnr)
-                local selection = action_state.get_selected_entry()
-                callback(selection[1])
-              end)
-              return true
-            end,
-          }
-        end,
-      },
+      -- file = {
+      --   input = function(callback)
+      --     local telescope = require 'telescope.builtin'
+      --     local actions = require 'telescope.actions'
+      --     local action_state = require 'telescope.actions.state'
+      --     telescope.find_files {
+      --       attach_mappings = function(prompt_bufnr)
+      --         actions.select_default:replace(function()
+      --           actions.close(prompt_bufnr)
+      --           local selection = action_state.get_selected_entry()
+      --           callback(selection[1])
+      --         end)
+      --         return true
+      --       end,
+      --     }
+      --   end,
+      -- },
     },
   },
   keys = {
