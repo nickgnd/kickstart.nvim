@@ -237,6 +237,16 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- [[ Custom Highlight ]]
+-- Pressing `Esc + o` in IEx shell opens a temporary file with `.erl` extension.
+-- Override the filetype to `elixir` to use Elixir syntax highlighting.
+vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufRead' }, {
+  pattern = '/private/**/tmp.*.erl',
+  callback = function()
+    vim.bo.filetype = 'elixir'
+  end,
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
