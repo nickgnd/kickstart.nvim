@@ -1,10 +1,28 @@
--- A collection of small QoL plugins for Neovim.
+-- snacks.nvim is a plugin that contains a collection of QoL improvements.
 -- https://github.com/folke/snacks.nvim
+--
+-- Picker
+-- One of those plugins is called snacks-picker
+-- It is a fuzzy finder, inspired by Telescope, that comes with a lot of different
+-- things that it can fuzzy find! It's more than just a "file finder", it can search
+-- many different aspects of Neovim, your workspace, LSP, and more!
+--
+-- Two important keymaps to use while in a picker are:
+--  - Insert mode: <c-/>
+--  - Normal mode: ?
+--
+-- This opens a window that shows you all of the keymaps for the current
+-- Snacks picker. This is really useful to discover what nacks-picker can
+-- do as well as how to actually do it!
 --
 return {
   'folke/snacks.nvim',
   priority = 1000,
   lazy = false,
+  dependencies = {
+    -- Useful for getting pretty icons, but requires a Nerd Font.
+    { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
+  },
   opts = {
     bigfile = { enabled = true },
     dashboard = {
@@ -41,6 +59,24 @@ return {
     },
     lazygit = { enabled = false },
     notifier = { enabled = true },
+    picker = {
+      -- [[ Configure Snacks Pickers ]]
+      -- See `:help snacks-picker` and `:help snacks-picker-setup`
+      matcher = {
+        fuzzy = true, -- use fuzzy matching
+        -- NOTE: what's the value of smartcase?
+        smartcase = false, -- use smartcase
+        ignorecase = true, -- use ignorecase
+        sort_empty = false, -- sort results when the search string is empty
+        filename_bonus = true, -- give bonus for matching file names (last part of the path)
+        file_pos = true, -- support patterns like `file:line:col` and `file:line`
+        -- the bonusses below, possibly require string concatenation and path normalization,
+        -- so this can have a performance impact for large lists and increase memory usage
+        cwd_bonus = true, -- give bonus for matching files in the cwd
+        frecency = true, -- frecency bonus
+        history_bonus = true, -- give more weight to chronological order
+      },
+    },
     quickfile = { enabled = true },
     statuscolumn = { enabled = true },
     words = { enabled = true },
@@ -52,6 +88,124 @@ return {
     },
   },
   keys = {
+    -- Picker - see :help `snacks-pickers-sources`
+    {
+      '<leader>sh',
+      function()
+        Snacks.picker.help()
+      end,
+      desc = '[S]earch [H]elp',
+    },
+    {
+      '<leader>sk',
+      function()
+        Snacks.picker.keymaps()
+      end,
+      desc = '[S]earch [K]eymaps',
+    },
+    {
+      '<leader>s:',
+      function()
+        Snacks.picker.command_history()
+      end,
+      desc = '[S]earch [:]Command History',
+    },
+    {
+      '<leader>se',
+      function()
+        Snacks.explorer()
+      end,
+      desc = 'File Explorer',
+    },
+    {
+      '<leader>sf',
+      function()
+        Snacks.picker.smart()
+        -- Snacks.picker.files()
+      end,
+      desc = '[S]earch [F]iles',
+    },
+    {
+      '<leader>ss',
+      function()
+        Snacks.picker.pickers()
+      end,
+      desc = '[S]earch [S]elect Snacks',
+    },
+    {
+      '<leader>sw',
+      function()
+        Snacks.picker.grep_word()
+      end,
+      desc = '[S]earch current [W]ord',
+      mode = { 'n', 'x' },
+    },
+    {
+      '<leader>sg',
+      function()
+        Snacks.picker.grep()
+      end,
+      desc = '[S]earch by [G]rep',
+    },
+    {
+      '<leader>sd',
+      function()
+        Snacks.picker.diagnostics()
+      end,
+      desc = '[S]earch [D]iagnostics',
+    },
+    {
+      '<leader>sr',
+      function()
+        Snacks.picker.resume()
+      end,
+      desc = '[S]earch [R]esume',
+    },
+    {
+      '<leader>s.',
+      function()
+        Snacks.picker.recent()
+      end,
+      desc = '[S]earch Recent Files ("." for repeat)',
+    },
+    {
+      '<leader>sm',
+      function()
+        Snacks.picker.marks()
+      end,
+      desc = '[S]earch [M]arks',
+    },
+    {
+      '<leader><leader>',
+      function()
+        Snacks.picker.buffers()
+      end,
+      desc = '[ ] Find existing buffers',
+    },
+    {
+      '<leader>/',
+      function()
+        Snacks.picker.lines {}
+      end,
+      desc = '[/] Fuzzily search in current buffer',
+    },
+    {
+      '<leader>s/',
+      function()
+        Snacks.picker.grep_buffers()
+      end,
+      desc = '[S]earch [/] in Open Files',
+    },
+    -- Shortcut for searching your Neovim configuration files
+    {
+      '<leader>sn',
+      function()
+        Snacks.picker.files { cwd = vim.fn.stdpath 'config' }
+      end,
+      desc = '[S]earch [N]eovim files',
+    },
+    --
+    -- Scratch
     {
       '<leader>.',
       function()
