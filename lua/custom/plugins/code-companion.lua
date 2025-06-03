@@ -74,29 +74,8 @@ return {
           },
         },
         slash_commands = {
-          -- ['git_diff'] = {
-          --   description = 'Show git diff',
-          --   ---@param chat CodeCompanion.Chat
-          --   callback = function(chat)
-          --     local handle = io.popen 'git diff --no-ext-diff'
-          --     if handle ~= nil then
-          --       local result = handle:read '*a'
-          --       handle:close()
-          --       if result ~= '' then
-          --         chat:add_reference({ role = 'user', content = result }, 'git', '<git_diff>')
-          --       else
-          --         return vim.notify('No changes in git diff', vim.log.levels.INFO, { title = 'CodeCompanion' })
-          --       end
-          --     else
-          --       return vim.notify('Could not retrieve git diff', vim.log.levels.ERROR, { title = 'CodeCompanion' })
-          --     end
-          --   end,
-          --   opts = {
-          --     contains_code = true,
-          --   },
-          -- },
           ['git_diff'] = {
-            description = 'Show git diff',
+            description = 'Use git diff',
             ---@param chat CodeCompanion.Chat
             callback = function(chat)
               local snacks = require 'snacks'
@@ -121,7 +100,8 @@ return {
                 },
                 confirm = function(picker, item)
                   picker:close()
-                  local cmd = item.text == 'Working Tree' and 'git diff --no-ext-diff' or 'git diff --no-ext-diff --staged'
+                  local cmd = item.text == 'Working Tree' and 'git --no-pager diff --no-ext-diff --no-color'
+                    or 'git --no-pager diff --no-ext-diff --no-color --staged'
 
                   local handle = io.popen(cmd)
                   if handle ~= nil then
@@ -158,15 +138,15 @@ return {
       },
     },
     prompt_library = {
-      ['Review git diff'] = {
+      ['Review git diff in working tree'] = {
         strategy = 'chat',
         description = 'Review git diff',
         opts = {
           index = 12,
           is_default = true,
-          is_slash_cmd = true,
-          short_name = 'git_review',
-          auto_submit = true,
+          is_slash_cmd = false,
+          short_name = 'git_diff_review',
+          auto_submit = false,
         },
         prompts = {
           {
@@ -188,7 +168,7 @@ Follow these steps:
 ```diff
 %s
 ```]],
-                vim.fn.system 'git diff --no-ext-diff'
+                vim.fn.system 'git --no-pager diff --no-ext-diff'
               )
             end,
             opts = {
