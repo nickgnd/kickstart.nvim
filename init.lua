@@ -580,17 +580,35 @@ require('lazy').setup({
             [vim.diagnostic.severity.HINT] = '󰌶 ',
           },
         } or {},
-        virtual_text = {
-          source = 'if_many',
-          spacing = 2,
+        -- virtual_text = {
+        --   source = 'if_many',
+        --   spacing = 2,
+        -- },
+        virtual_lines = {
+          current_line = true,
           format = function(diagnostic)
-            local diagnostic_message = {
-              [vim.diagnostic.severity.ERROR] = diagnostic.message,
-              [vim.diagnostic.severity.WARN] = diagnostic.message,
-              [vim.diagnostic.severity.INFO] = diagnostic.message,
-              [vim.diagnostic.severity.HINT] = diagnostic.message,
-            }
-            return diagnostic_message[diagnostic.severity]
+            local message = diagnostic.message
+            -- Get current window width and leave some margin for line numbers, etc.
+            local win_width = vim.api.nvim_win_get_width(0) - 10 -- Adjust margin as needed
+            local max_width = math.min(80, win_width) -- Use 80 or window width, whichever is smaller
+
+            if #message > max_width then
+              local lines = {}
+              local current_line = ''
+              for word in message:gmatch '%S+' do
+                if #current_line + #word + 1 > max_width then
+                  table.insert(lines, current_line)
+                  current_line = word
+                else
+                  current_line = current_line == '' and word or current_line .. ' ' .. word
+                end
+              end
+              if current_line ~= '' then
+                table.insert(lines, current_line)
+              end
+              return table.concat(lines, '\n')
+            end
+            return message
           end,
         },
       }
