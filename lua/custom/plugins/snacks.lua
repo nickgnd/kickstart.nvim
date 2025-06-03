@@ -23,8 +23,12 @@ return {
     -- Useful for getting pretty icons, but requires a Nerd Font.
     { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
   },
+  ---@type snacks.Config
   opts = {
     bigfile = { enabled = true },
+    explorer = {
+      replace_netrw = true,
+    },
     dashboard = {
       enabled = true,
       sections = {
@@ -76,6 +80,9 @@ return {
         frecency = true, -- frecency bonus
         history_bonus = true, -- give more weight to chronological order
       },
+      sources = {
+        explorer = {},
+      },
     },
     quickfile = { enabled = true },
     statuscolumn = { enabled = true },
@@ -111,11 +118,46 @@ return {
       desc = '[S]earch [:]Command History',
     },
     {
-      '<leader>se',
+      '<leader>e',
       function()
         Snacks.explorer()
       end,
       desc = 'File Explorer',
+    },
+    {
+      '\\',
+      desc = 'File Explorer Toggle',
+      -- Based on https://www.reddit.com/r/neovim/comments/1k7rkfp/comment/mp2j44i
+      (function()
+        -- Create a closure to store both previous buffer and window
+        local previous_buffer = nil
+        local previous_window = nil
+
+        return function()
+          local explorer_pickers = Snacks.picker.get { source = 'explorer' }
+          -- Check if there are any explorer pickers open
+          if #explorer_pickers == 0 then
+            -- If none exist, store current buffer/window and open a new explorer picker
+            previous_buffer = vim.api.nvim_get_current_buf()
+            previous_window = vim.api.nvim_get_current_win()
+            Snacks.picker.explorer()
+          elseif explorer_pickers[1]:is_focused() then
+            -- If the explorer is already focused, close it and return to previous buffer/window
+            -- explorer_pickers[1]:close()
+            if previous_buffer and vim.api.nvim_buf_is_valid(previous_buffer) and previous_window and vim.api.nvim_win_is_valid(previous_window) then
+              -- Focus the previous window first
+              vim.api.nvim_set_current_win(previous_window)
+              -- Then set the buffer in that window
+              vim.api.nvim_win_set_buf(previous_window, previous_buffer)
+            end
+          else
+            -- If the explorer exists but isn't focused, store current buffer/window and focus explorer
+            previous_buffer = vim.api.nvim_get_current_buf()
+            previous_window = vim.api.nvim_get_current_win()
+            explorer_pickers[1]:focus()
+          end
+        end
+      end)(),
     },
     {
       '<leader>sf',
