@@ -67,8 +67,8 @@ return {
           send = {
             callback = function(chat)
               vim.cmd 'stopinsert'
-              chat:add_buf_message { role = 'llm', content = '' }
               chat:submit()
+              chat:add_buf_message { role = 'llm', content = '' }
             end,
             index = 1,
             description = 'Send',
