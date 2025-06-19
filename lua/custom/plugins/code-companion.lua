@@ -215,6 +215,17 @@ Follow these steps:
     local spinner = require 'custom.functions.code-companion-spinner'
     spinner:init()
 
+    -- Limit the undo buffer size for CodeCompanion buffers
+    -- to improve performance and avoid excessive memory usage.
+    -- https://github.com/olimorris/codecompanion.nvim/issues/552#issuecomment-2984548382
+    vim.api.nvim_create_autocmd('FileType', {
+      group = vim.api.nvim_create_augroup('LimitCCUndoBuffer', { clear = true }),
+      pattern = { 'codecompanion' },
+      callback = function()
+        vim.opt_local.undolevels = 5
+      end,
+    })
+
     -- Setup the entire opts table
     require('codecompanion').setup(opts)
   end,
