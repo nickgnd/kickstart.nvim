@@ -655,6 +655,7 @@ require('lazy').setup({
           fetchDeps = false,
         },
         ts_ls = {},
+        typos_lsp = {},
       }
 
       ---@type MasonLspconfigSettings
