@@ -62,20 +62,11 @@ return {
         show_defaults = true,
         show_model_choices = true,
       },
-      copilot_claude = function()
-        return require('codecompanion.adapters').extend('copilot', {
-          name = 'copilot_claude',
-          schema = {
-            model = {
-              default = 'claude-3.7-sonnet',
-            },
-          },
-        })
-      end,
     },
     strategies = {
       chat = {
-        adapter = 'copilot_claude',
+        name = 'copilot',
+        model = 'claude-sonnet-4-20250514',
         keymaps = {
           send = {
             callback = function(chat)
@@ -138,7 +129,7 @@ return {
           },
         },
       },
-      inline = { adapter = 'copilot_claude' },
+      inline = { adapter = 'copilot' },
     },
     --
     extensions = {
@@ -166,10 +157,12 @@ return {
           ---Automatically generate titles for new chats
           auto_generate_title = true,
           title_generation_opts = {
-            ---Adapter for generating titles (defaults to active chat's adapter)
-            adapter = nil, -- e.g "copilot"
-            ---Model for generating titles (defaults to active chat's model)
-            model = nil, -- e.g "gpt-4o"
+            adapter = 'copilot',
+            -- Specifically use gpt-4.1 to don't consume premium requests (Claude Sonnet 4)
+            -- https://github.com/olimorris/codecompanion.nvim/discussions/1717#discussioncomment-13655026
+            model = 'gpt-4.1',
+            refresh_every_n_prompts = 0,
+            max_refreshes = 3,
           },
           ---On exiting and entering neovim, loads the last chat on opening chat
           continue_last_chat = false,
