@@ -11,6 +11,19 @@ return {
     'ravitemer/mcphub.nvim',
     'ravitemer/codecompanion-history.nvim',
     {
+      -- Better git diff integration
+      -- https://codecompanion.olimorris.dev/installation.html#mini-diff
+      -- https://github.com/olimorris/codecompanion.nvim/discussions/1772
+      'echasnovski/mini.diff',
+      config = function()
+        local diff = require 'mini.diff'
+        diff.setup {
+          -- Disabled by default
+          source = diff.gen_source.none(),
+        }
+      end,
+    },
+    {
       'saghen/blink.cmp',
       ---@module 'blink.cmp'
       ---@type blink.cmp.Config
