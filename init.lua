@@ -656,11 +656,26 @@ require('lazy').setup({
           },
         },
         elixirls = {
-          dialyzerEnabled = true,
-          fetchDeps = false,
+          settings = {
+            elixirLS = {
+              dialyzerEnabled = false,
+              fetchDeps = false,
+              mcpEnabled = true,
+            },
+          },
         },
         ts_ls = {},
-        typos_lsp = {},
+        typos_lsp = {
+          init_options = {
+            -- Custom config. Used together with a config file found in the workspace or its parents,
+            -- taking precedence for settings declared in both.
+            -- Equivalent to the typos `--config` cli argument.
+            config = '~/.config/typos/typos.toml',
+            -- How typos are rendered in the editor, can be one of an Error, Warning, Info or Hint.
+            -- Defaults to error.
+            diagnosticSeverity = 'Warning',
+          },
+        },
       }
 
       ---@type MasonLspconfigSettings
