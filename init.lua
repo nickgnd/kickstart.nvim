@@ -388,6 +388,7 @@ require('lazy').setup({
         { '<leader>w', proxy = '<c-w>', group = 'windows' }, -- proxy to window mappings
         { '<leader>t', group = '[T]oggle / [T]est' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+        { 'gr', group = 'LSP Actions', mode = { 'n' } },
       },
     },
   },
