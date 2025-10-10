@@ -656,14 +656,24 @@ require('lazy').setup({
             },
           },
         },
-        elixirls = {
-          settings = {
-            elixirLS = {
-              dialyzerEnabled = false,
-              fetchDeps = false,
-              mcpEnabled = true,
-            },
-          },
+        -- -- TODO: is it properly configured?
+        -- elixirls = {
+        --   settings = {
+        --     elixirLS = {
+        --       dialyzerEnabled = false,
+        --       incrementalDialyzer = false,
+        --       suggestSpecs = false,
+        --       fetchDeps = false,
+        --       mcpEnabled = true,
+        --     },
+        --   },
+        -- },
+        expert = {
+          -- Use Nightly Builds
+          -- https://github.com/elixir-lang/expert/tree/main?tab=readme-ov-file#nightly-builds
+          cmd = { '/Users/nicolognudi/code/personal/expert_darwin_arm64' },
+          root_markers = { 'mix.exs', '.git' },
+          filetypes = { 'elixir', 'eelixir', 'heex' },
         },
         ts_ls = {},
         typos_lsp = {
