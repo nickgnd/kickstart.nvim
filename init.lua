@@ -619,94 +619,91 @@ require('lazy').setup({
         },
       }
 
+      -- LSP servers and clients are able to communicate to each other what features they support.
+      --  By default, Neovim doesn't support everything that is in the LSP specification.
+      --  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
+      --  So, we create new capabilities with blink.cmp, and then broadcast that to the servers.
+      --
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
       --
-      --  Add any additional override configuration in the following tables. Available keys are:
-      --  - cmd (table): Override the default command used to start the server
-      --  - filetypes (table): Override the default list of associated filetypes for the server
-      --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
-      --  - settings (table): Override the default settings passed when initializing the server.
-      --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
+      -- NOTE: The following line is now commented as blink.cmp extends capabilites by default from its internal code:
+      -- https://github.com/Saghen/blink.cmp/blob/102db2f5996a46818661845cf283484870b60450/plugin/blink-cmp.lua
+      -- It has been left here as a comment for educational purposes (as the predecessor completion plugin required this explicit step).
+      -- local capabilities = require("blink.cmp").get_lsp_capabilities()
+      --
+      -- Language servers can broadly be installed in the following ways:
+      --  1) via the mason package manager; or
+      --  2) via your system's package manager; or
+      --  3) via a release binary from a language server's repo that's accessible somewhere on your system.
+      -- The servers table comprises of the following sub-tables:
+      -- 1. mason
+      -- 2. others
+      -- Both these tables have an identical structure of language server names as keys and
+      -- a table of language server configuration as values.
+      ---@class LspServersConfig
+      ---@field mason table<string, vim.lsp.Config>
+      ---@field others table<string, vim.lsp.Config>
       local servers = {
-        -- clangd = {},
-        -- gopls = {},
-        -- pyright = {},
-        -- rust_analyzer = {},
-        -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
-        --
-        -- Some languages (like typescript) have entire language plugins that can be useful:
-        --    https://github.com/pmizio/typescript-tools.nvim
-        --
-        -- But for many setups, the LSP (`ts_ls`) will work just fine
-        -- ts_ls = {},
-        --
-
-        lua_ls = {
-          -- cmd = { ... },
-          -- filetypes = { ... },
-          -- capabilities = {},
-          settings = {
-            Lua = {
-              completion = {
-                callSnippet = 'Replace',
+        --  Add any additional override configuration in the following tables. Available keys are:
+        --  - cmd (table): Override the default command used to start the server
+        --  - filetypes (table): Override the default list of associated filetypes for the server
+        --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
+        --  - settings (table): Override the default settings passed when initializing the server.
+        --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
+        --  Feel free to add/remove any LSPs here that you want to install via Mason. They will automatically be installed and setup.
+        mason = {
+          -- clangd = {},
+          -- gopls = {},
+          -- pyright = {},
+          -- rust_analyzer = {},
+          -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
+          --
+          -- Some languages (like typescript) have entire language plugins that can be useful:
+          --    https://github.com/pmizio/typescript-tools.nvim
+          --
+          -- But for many setups, the LSP (`ts_ls`) will work just fine
+          -- ts_ls = {},
+          --
+          lua_ls = {
+            -- cmd = { ... },
+            -- filetypes = { ... },
+            -- capabilities = {},
+            settings = {
+              Lua = {
+                completion = {
+                  callSnippet = 'Replace',
+                },
+                -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
+                -- diagnostics = { disable = { 'missing-fields' } },
               },
-              -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-              -- diagnostics = { disable = { 'missing-fields' } },
+            },
+          },
+          expert = {
+            -- Use Nightly Builds
+            -- https://github.com/elixir-lang/expert/tree/main?tab=readme-ov-file#nightly-builds
+            cmd = { '/Users/nicolognudi/code/personal/expert_darwin_arm64' },
+            root_markers = { 'mix.exs', '.git' },
+            filetypes = { 'elixir', 'eelixir', 'heex' },
+          },
+          ts_ls = {},
+          typos_lsp = {
+            init_options = {
+              -- Custom config. Used together with a config file found in the workspace or its parents,
+              -- taking precedence for settings declared in both.
+              -- Equivalent to the typos `--config` cli argument.
+              config = '~/.config/typos/typos.toml',
+              -- How typos are rendered in the editor, can be one of an Error, Warning, Info or Hint.
+              -- Defaults to error.
+              diagnosticSeverity = 'Warning',
             },
           },
         },
-        -- -- TODO: is it properly configured?
-        -- elixirls = {
-        --   settings = {
-        --     elixirLS = {
-        --       dialyzerEnabled = false,
-        --       incrementalDialyzer = false,
-        --       suggestSpecs = false,
-        --       fetchDeps = false,
-        --       mcpEnabled = true,
-        --     },
-        --   },
-        -- },
-        expert = {
-          -- Use Nightly Builds
-          -- https://github.com/elixir-lang/expert/tree/main?tab=readme-ov-file#nightly-builds
-          cmd = { '/Users/nicolognudi/code/personal/expert_darwin_arm64' },
-          root_markers = { 'mix.exs', '.git' },
-          filetypes = { 'elixir', 'eelixir', 'heex' },
+        -- This table contains config for all language servers that are *not* installed via Mason.
+        -- Structure is identical to the mason table from above.
+        others = {
+          -- dartls = {},
         },
-        ts_ls = {},
-        typos_lsp = {
-          init_options = {
-            -- Custom config. Used together with a config file found in the workspace or its parents,
-            -- taking precedence for settings declared in both.
-            -- Equivalent to the typos `--config` cli argument.
-            config = '~/.config/typos/typos.toml',
-            -- How typos are rendered in the editor, can be one of an Error, Warning, Info or Hint.
-            -- Defaults to error.
-            diagnosticSeverity = 'Warning',
-          },
-        },
-      }
-
-      ---@type MasonLspconfigSettings
-      require('mason-lspconfig').setup {
-        ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
-        -- NOTE: When the keys of servers are passed as a table to automatic_enable,
-        -- it causes mason-lspconfig to ignore any LSPs that are installed via Mason
-        -- but not explicitly listed in servers.
-        -- https://github.com/nvim-lua/kickstart.nvim/pull/1475/files#r2094166972
-        automatic_enable = vim.tbl_keys(servers or {}),
-        -- TODO: remove this ?
-        -- handlers = {
-        --   function(server_name)
-        --     local config = servers[server_name] or {}
-        --     vim.lsp.config(server_name, config)
-        --     -- It should not be necessary with Mason 2
-        --     -- https://github.com/nvim-lua/kickstart.nvim/pull/1475#discussion_r2077249925
-        --     -- vim.lsp.enable(server_name)
-        --   end,
-        -- },
       }
 
       -- Ensure the servers and tools above are installed
@@ -722,20 +719,30 @@ require('lazy').setup({
       --
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
-      local ensure_installed = vim.tbl_keys(servers or {})
+      local ensure_installed = vim.tbl_keys(servers.mason or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
-        'markdownlint', -- Used to format Markdown files
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
-      -- Installed LSPs are configured and enabled automatically with mason-lspconfig
-      -- The loop below is for overriding the default configuration of LSPs with the ones in the servers table
-      for server_name, config in pairs(servers) do
-        vim.lsp.config(server_name, config)
+      -- Either merge all additional server configs from the `servers.mason` and `servers.others` tables
+      -- to the default language server configs as provided by nvim-lspconfig or
+      -- define a custom server config that's unavailable on nvim-lspconfig.
+      for server, config in pairs(vim.tbl_extend('keep', servers.mason, servers.others)) do
+        if not vim.tbl_isempty(config) then
+          vim.lsp.config(server, config)
+        end
       end
 
-      -- NOTE: Some servers may require an old setup until they are updated. For the full list refer here: https://github.com/neovim/nvim-lspconfig/issues/3705
-      -- These servers will have to be manually set up with require("lspconfig").server_name.setup{}
+      -- After configuring our language servers, we now enable them
+      ---@type MasonLspconfigSettings
+      require('mason-lspconfig').setup {
+        ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
+        automatic_enable = true, -- automatically run vim.lsp.enable() for all servers that are installed via Mason
+      }
+      -- Manually run vim.lsp.enable for all language servers that are *not* installed via Mason
+      if not vim.tbl_isempty(servers.others) then
+        vim.lsp.enable(vim.tbl_keys(servers.others))
+      end
     end,
   },
 
