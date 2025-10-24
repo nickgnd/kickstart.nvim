@@ -83,6 +83,23 @@ return {
       sources = {
         explorer = {},
       },
+      actions = {
+        -- Send picker selections directly to Sidekick's AI CLI tools with `Alt+a`
+        -- https://github.com/folke/sidekick.nvim?tab=readme-ov-file#snacksnvim-picker-integrationz
+        sidekick_send = function(...)
+          return require('sidekick.cli.picker.snacks').send(...)
+        end,
+      },
+      win = {
+        input = {
+          keys = {
+            ['<a-a>'] = {
+              'sidekick_send',
+              mode = { 'n', 'i' },
+            },
+          },
+        },
+      },
     },
     quickfile = { enabled = true },
     statuscolumn = { enabled = true },
