@@ -402,19 +402,6 @@ require('lazy').setup({
 
   -- LSP Plugins
   {
-    -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
-    -- used for completion, annotations and signatures of Neovim apis
-    'folke/lazydev.nvim',
-    ft = 'lua',
-    opts = {
-      library = {
-        -- Load luvit types when the `vim.uv` word is found
-        { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
-        { path = 'snacks.nvim', words = { 'Snacks' } },
-      },
-    },
-  },
-  {
     -- Main LSP Configuration
     'neovim/nvim-lspconfig',
     dependencies = {
@@ -422,7 +409,6 @@ require('lazy').setup({
       -- Mason must be loaded before its dependents so we need to set it up here.
       -- NOTE: `opts = {}` is the same as calling `require('mason').setup({})`
       { 'mason-org/mason.nvim', opts = {} },
-      { 'mason-org/mason-lspconfig.nvim', opts = {} },
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
       -- Useful status updates for LSP.
@@ -518,26 +504,13 @@ require('lazy').setup({
             vim.diagnostic.enable(not vim.diagnostic.is_enabled())
           end, '[T]oggle [D]iagnostics')
 
-          -- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
-          ---@param client vim.lsp.Client
-          ---@param method vim.lsp.protocol.Method.ClientToServer
-          ---@param bufnr? integer some lsp support methods only in specific files
-          ---@return boolean
-          local function client_supports_method(client, method, bufnr)
-            if vim.fn.has 'nvim-0.11' == 1 then
-              return client:supports_method(method, bufnr)
-            else
-              return client.supports_method(method, { bufnr = bufnr })
-            end
-          end
-
           -- The following two autocommands are used to highlight references of the
           -- word under your cursor when your cursor rests there for a little while.
           --    See `:help CursorHold` for information about when this is executed
           --
           -- When you move your cursor, the highlights will be cleared (the second autocommand).
           local client = vim.lsp.get_client_by_id(event.data.client_id)
-          if client and client_supports_method(client, 'textDocument/documentHighlight', event.buf) then
+          if client and client:supports_method('textDocument/documentHighlight', event.buf) then
             local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
             vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
               buffer = event.buf,
@@ -564,7 +537,7 @@ require('lazy').setup({
           -- code, if the language server you are using supports them
           --
           -- This may be unwanted, since they displace some of your code
-          if client and client_supports_method(client, 'textDocument/inlayHint', event.buf) then
+          if client and client:supports_method('textDocument/inlayHint', event.buf) then
             map('<leader>th', function()
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
             end, '[T]oggle Inlay [H]ints')
@@ -666,9 +639,25 @@ require('lazy').setup({
           -- ts_ls = {},
           --
           lua_ls = {
-            -- cmd = { ... },
-            -- filetypes = { ... },
-            -- capabilities = {},
+            on_init = function(client)
+              if client.workspace_folders then
+                local path = client.workspace_folders[1].name
+                if path ~= vim.fn.stdpath 'config' and (vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc')) then
+                  return
+                end
+              end
+
+              client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
+                runtime = {
+                  version = 'LuaJIT',
+                  path = { 'lua/?.lua', 'lua/?/init.lua' },
+                },
+                workspace = {
+                  checkThirdParty = false,
+                  library = vim.api.nvim_get_runtime_file('', true),
+                },
+              })
+            end,
             settings = {
               Lua = {
                 completion = {
@@ -678,13 +667,6 @@ require('lazy').setup({
                 -- diagnostics = { disable = { 'missing-fields' } },
               },
             },
-          },
-          expert = {
-            -- Use Nightly Builds
-            -- https://github.com/elixir-lang/expert/tree/main?tab=readme-ov-file#nightly-builds
-            cmd = { '/Users/nicolognudi/code/personal/expert_darwin_arm64', '--stdio' },
-            root_markers = { 'mix.exs', '.git' },
-            filetypes = { 'elixir', 'eelixir', 'heex' },
           },
           ts_ls = {},
           typos_lsp = {
@@ -703,6 +685,13 @@ require('lazy').setup({
         -- Structure is identical to the mason table from above.
         others = {
           -- dartls = {},
+          expert = {
+            -- Use Nightly Builds
+            -- https://github.com/elixir-lang/expert/tree/main?tab=readme-ov-file#nightly-builds
+            cmd = { '/Users/nicolognudi/code/personal/expert_darwin_arm64', '--stdio' },
+            root_markers = { 'mix.exs', '.git' },
+            filetypes = { 'elixir', 'eelixir', 'heex' },
+          },
         },
       }
 
@@ -719,7 +708,19 @@ require('lazy').setup({
       --
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
-      local ensure_installed = vim.tbl_keys(servers.mason or {})
+      local ensure_installed = {}
+      local mason_registry = require 'mason-registry'
+      local lsp_mason_map = {
+        lua_ls = 'lua-language-server',
+        ts_ls = 'typescript-language-server',
+        typos_lsp = 'typos-lsp',
+      }
+      for server_name in pairs(servers.mason or {}) do
+        local package_name = lsp_mason_map[server_name] or server_name
+        if pcall(mason_registry.get_package, package_name) then
+          table.insert(ensure_installed, package_name)
+        end
+      end
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
       })
@@ -727,21 +728,17 @@ require('lazy').setup({
       -- Either merge all additional server configs from the `servers.mason` and `servers.others` tables
       -- to the default language server configs as provided by nvim-lspconfig or
       -- define a custom server config that's unavailable on nvim-lspconfig.
-      for server, config in pairs(vim.tbl_extend('keep', servers.mason, servers.others)) do
+      local all_servers = vim.tbl_extend('keep', servers.mason, servers.others)
+      for server, config in pairs(all_servers) do
         if not vim.tbl_isempty(config) then
           vim.lsp.config(server, config)
         end
       end
 
       -- After configuring our language servers, we now enable them
-      ---@type MasonLspconfigSettings
-      require('mason-lspconfig').setup {
-        ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
-        automatic_enable = true, -- automatically run vim.lsp.enable() for all servers that are installed via Mason
-      }
-      -- Manually run vim.lsp.enable for all language servers that are *not* installed via Mason
-      if not vim.tbl_isempty(servers.others) then
-        vim.lsp.enable(vim.tbl_keys(servers.others))
+      local servers_to_enable = vim.tbl_keys(all_servers)
+      if not vim.tbl_isempty(servers_to_enable) then
+        vim.lsp.enable(servers_to_enable)
       end
     end,
   },
@@ -824,7 +821,6 @@ require('lazy').setup({
         },
         opts = {},
       },
-      'folke/lazydev.nvim',
       'fang2hou/blink-copilot',
     },
     --- @module 'blink.cmp'
@@ -871,7 +867,7 @@ require('lazy').setup({
       },
 
       sources = {
-        default = { 'snippets', 'lsp', 'copilot', 'path', 'lazydev' },
+        default = { 'snippets', 'lsp', 'copilot', 'path' },
         providers = {
           snippets = { score_offset = 500 },
           lsp = { score_offset = 400 },
@@ -882,7 +878,6 @@ require('lazy').setup({
             score_offset = 200,
             async = true,
           },
-          lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
         },
       },
 
