@@ -634,7 +634,7 @@ require('lazy').setup({
           expert = {
             -- Use Nightly Builds
             -- https://github.com/elixir-lang/expert/tree/main?tab=readme-ov-file#nightly-builds
-            cmd = { '/Users/nicolognudi/code/personal/expert_darwin_arm64', '--stdio' },
+            cmd = { '/Users/nicolognudi/.local/bin/expert', '--stdio' },
             root_markers = { 'mix.exs', '.git' },
             filetypes = { 'elixir', 'eelixir', 'heex' },
           },
