@@ -357,6 +357,8 @@ require('lazy').setup({
       -- Mason must be loaded before its dependents so we need to set it up here.
       -- NOTE: `opts = {}` is the same as calling `require('mason').setup({})`
       { 'mason-org/mason.nvim', opts = {} },
+      -- Maps LSP server names between nvim-lspconfig and Mason package names.
+      'mason-org/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
       -- Useful status updates for LSP.
@@ -534,18 +536,8 @@ require('lazy').setup({
         },
       }
 
-      -- LSP servers and clients are able to communicate to each other what features they support.
-      --  By default, Neovim doesn't support everything that is in the LSP specification.
-      --  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
-      --  So, we create new capabilities with blink.cmp, and then broadcast that to the servers.
-      --
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
-      --
-      -- NOTE: The following line is now commented as blink.cmp extends capabilites by default from its internal code:
-      -- https://github.com/Saghen/blink.cmp/blob/102db2f5996a46818661845cf283484870b60450/plugin/blink-cmp.lua
-      -- It has been left here as a comment for educational purposes (as the predecessor completion plugin required this explicit step).
-      -- local capabilities = require("blink.cmp").get_lsp_capabilities()
       --
       -- Language servers can broadly be installed in the following ways:
       --  1) via the mason package manager; or
@@ -594,7 +586,12 @@ require('lazy').setup({
                 },
                 workspace = {
                   checkThirdParty = false,
-                  library = vim.api.nvim_get_runtime_file('', true),
+                  -- NOTE: this is a lot slower and will cause issues when working on your own configuration.
+              --  See https://github.com/neovim/nvim-lspconfig/issues/3189
+              library = vim.tbl_extend('force', vim.api.nvim_get_runtime_file('', true), {
+                '${3rd}/luv/library',
+                '${3rd}/busted/library',
+              }),
                 },
               })
             end,
