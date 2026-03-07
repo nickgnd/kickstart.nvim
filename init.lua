@@ -880,6 +880,10 @@ require('lazy').setup({
   },
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
+    lazy = false,
+    build = ':TSUpdate',
+    branch = 'main',
+    -- [[ Configure Treesitter ]] See `:help nvim-treesitter-intro`
     config = function()
       local parsers = {
         'bash',
@@ -906,36 +910,20 @@ require('lazy').setup({
         'vimdoc',
         'zig',
       }
-      local filetypes = {
-        'bash',
-        'c',
-        'css',
-        'diff',
-        'eelixir',
-        'elixir',
-        'heex',
-        'html',
-        'javascript',
-        'javascriptreact',
-        'lua',
-        'luadoc',
-        'markdown',
-        'markdown_inline',
-        'query',
-        'ruby',
-        'rust',
-        'scss',
-        'sql',
-        'typescript',
-        'typescriptreact',
-        'vim',
-        'vimdoc',
-        'zig',
-      }
-      require('nvim-treesitter.install').update { with_sync = false }(parsers)
+      require('nvim-treesitter').install(parsers)
       vim.api.nvim_create_autocmd('FileType', {
-        pattern = filetypes,
-        callback = function() vim.treesitter.start() end,
+        callback = function(args)
+          local language = vim.treesitter.language.get_lang(args.match)
+          if not language then return end
+
+          -- check if parser exists and load it
+          if not vim.treesitter.language.add(language) then return end
+          -- enables syntax highlighting and other treesitter features
+          vim.treesitter.start(args.buf, language)
+
+          -- enables treesitter based indentation
+          vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        end,
       })
     end,
   },
