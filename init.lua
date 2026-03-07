@@ -243,9 +243,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- Override the filetype to `elixir` to use Elixir syntax highlighting.
 vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufRead' }, {
   pattern = '/private/**/tmp.*.erl',
-  callback = function()
-    vim.bo.filetype = 'elixir'
-  end,
+  callback = function() vim.bo.filetype = 'elixir' end,
 })
 
 -- [[ Install `lazy.nvim` plugin manager ]]
@@ -450,9 +448,7 @@ require('lazy').setup({
           map('gW', require('snacks').picker.lsp_workspace_symbols, 'Open Workspace Symbols')
 
           -- Toggle to show/hide diagnostic messages
-          map('<leader>td', function()
-            vim.diagnostic.enable(not vim.diagnostic.is_enabled())
-          end, '[T]oggle [D]iagnostics')
+          map('<leader>td', function() vim.diagnostic.enable(not vim.diagnostic.is_enabled()) end, '[T]oggle [D]iagnostics')
 
           -- The following two autocommands are used to highlight references of the
           -- word under your cursor when your cursor rests there for a little while.
@@ -530,9 +526,7 @@ require('lazy').setup({
                   current_line = current_line == '' and word or current_line .. ' ' .. word
                 end
               end
-              if current_line ~= '' then
-                table.insert(lines, current_line)
-              end
+              if current_line ~= '' then table.insert(lines, current_line) end
               return table.concat(lines, '\n')
             end
             return message
@@ -663,9 +657,7 @@ require('lazy').setup({
       }
       for server_name in pairs(servers.mason or {}) do
         local package_name = lsp_mason_map[server_name] or server_name
-        if pcall(mason_registry.get_package, package_name) then
-          table.insert(ensure_installed, package_name)
-        end
+        if pcall(mason_registry.get_package, package_name) then table.insert(ensure_installed, package_name) end
       end
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
@@ -676,16 +668,12 @@ require('lazy').setup({
       -- define a custom server config that's unavailable on nvim-lspconfig.
       local all_servers = vim.tbl_extend('keep', servers.mason, servers.others)
       for server, config in pairs(all_servers) do
-        if not vim.tbl_isempty(config) then
-          vim.lsp.config(server, config)
-        end
+        if not vim.tbl_isempty(config) then vim.lsp.config(server, config) end
       end
 
       -- After configuring our language servers, we now enable them
       local servers_to_enable = vim.tbl_keys(all_servers)
-      if not vim.tbl_isempty(servers_to_enable) then
-        vim.lsp.enable(servers_to_enable)
-      end
+      if not vim.tbl_isempty(servers_to_enable) then vim.lsp.enable(servers_to_enable) end
     end,
   },
 
