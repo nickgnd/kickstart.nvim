@@ -335,7 +335,7 @@ require('lazy').setup({
         { '<leader>W', group = '[W]orkspace' },
         { '<leader>w', proxy = '<c-w>', group = 'windows' }, -- proxy to window mappings
         { '<leader>t', group = '[T]oggle / [T]est' },
-        { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+        { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } }, -- Enable gitsigns recommended keymaps first
         { 'gr', group = 'LSP Actions', mode = { 'n' } },
       },
     },
@@ -958,7 +958,7 @@ require('lazy').setup({
   require 'kickstart.plugins.autopairs',
   -- Disabled in favour of snacks.explorer
   -- require 'kickstart.plugins.neo-tree',
-  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommended keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.

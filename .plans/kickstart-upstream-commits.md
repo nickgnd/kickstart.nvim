@@ -61,4 +61,6 @@ Current baseline (GitHub compare `master...nickgnd:nico/nvim-kickstarter`):
 - Applied: `a5d4d12` (diagnostic jump callback deprecation fix)
 - Applied: `d97de4f` (remove `blink.cmp` from `nvim-lspconfig` dependencies)
 - Applied: `9b4fbc5` + `4b065ad` (mini.ai mapping collision fix + updated example)
+- Applied: `886f2bc` + `648471c` + `16dd8f5` (gitsigns/lint comment and label clarifications)
+- Observed error: `vim.tbl_flatten is deprecated. Run ":checkhealth vim.deprecated" for more information`
 - Deferred: treesitter medium-scope series, conform formatting series, vim.pack migration
