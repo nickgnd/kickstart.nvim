@@ -534,6 +534,17 @@ require('lazy').setup({
             return message
           end,
         },
+
+        -- Auto open the float, so you can easily read errors while jumping with `[d` and `]d`
+        jump = {
+          on_jump = function(_, bufnr)
+            vim.diagnostic.open_float {
+              bufnr = bufnr,
+              scope = 'cursor',
+              focus = false,
+            }
+          end,
+        },
       }
 
       -- Enable the following language servers
