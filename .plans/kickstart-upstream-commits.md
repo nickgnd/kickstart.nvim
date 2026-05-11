@@ -63,5 +63,6 @@ Current baseline (GitHub compare `master...nickgnd:nico/nvim-kickstarter`):
 - Applied: `9b4fbc5` + `4b065ad` (mini.ai mapping collision fix + updated example)
 - Applied: `886f2bc` + `648471c` + `16dd8f5` (gitsigns/lint comment and label clarifications)
 - Applied: `8ac4b12` + `e01e1eb` + `c7f05a0` + `f27810d` (treesitter attach refactor + auto-install + indent fallback)
+- Applied: `459b868` + `ce353a9` (conform + lua_ls formatting behavior updates)
 - Observed error: `vim.tbl_flatten is deprecated. Run ":checkhealth vim.deprecated" for more information`
-- Deferred: conform formatting series, vim.pack migration
+- Deferred: vim.pack migration
