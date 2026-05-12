@@ -64,5 +64,6 @@ Current baseline (GitHub compare `master...nickgnd:nico/nvim-kickstarter`):
 - Applied: `886f2bc` + `648471c` + `16dd8f5` (gitsigns/lint comment and label clarifications)
 - Applied: `8ac4b12` + `e01e1eb` + `c7f05a0` + `f27810d` (treesitter attach refactor + auto-install + indent fallback)
 - Applied: `459b868` + `ce353a9` (conform + lua_ls formatting behavior updates)
+- Local preference: enabled `format_on_save` whitelist for `lua`, `elixir`, `eelixir`, `heex`, `javascript`, `javascriptreact`, `typescript`, `typescriptreact`, `json`, `jsonc`, `yaml`; kept markdown disabled
 - Observed error: `vim.tbl_flatten is deprecated. Run ":checkhealth vim.deprecated" for more information`
 - Deferred: vim.pack migration
