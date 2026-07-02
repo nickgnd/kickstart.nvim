@@ -268,7 +268,7 @@ return {
     {
       '<leader>sn',
       function()
-        Snacks.picker.files { cwd = vim.fn.stdpath 'config' }
+        Snacks.picker.files { cwd = vim.fn.stdpath 'config', follow = true }
       end,
       desc = '[S]earch [N]eovim files',
     },
