@@ -19,10 +19,6 @@ return {
   'folke/snacks.nvim',
   priority = 1000,
   lazy = false,
-  dependencies = {
-    -- Useful for getting pretty icons, but requires a Nerd Font.
-    { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
-  },
   ---@type snacks.Config
   opts = {
     bigfile = { enabled = true },

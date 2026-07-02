@@ -870,6 +870,13 @@ require('lazy').setup({
   { -- Collection of various small independent plugins/modules
     'nvim-mini/mini.nvim',
     config = function()
+      -- If a nerd font is available, load the icons module for pretty icons in various plugins.
+      if vim.g.have_nerd_font then
+        require('mini.icons').setup()
+        -- Used for backwards compatibility with plugins that require `nvim-web-devicons` (e.g. snacks.nvim)
+        MiniIcons.mock_nvim_web_devicons()
+      end
+
       -- Better Around/Inside textobjects
       --
       -- Examples:
