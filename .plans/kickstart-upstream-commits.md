@@ -1,6 +1,6 @@
 # Kickstart upstream review (since 2d541c4)
 
-Last updated: 2026-05-11
+Last updated: 2026-07-02
 
 | Hash | Link | Description | Relevant? | Risk | Category | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -67,3 +67,20 @@ Current baseline (GitHub compare `master...nickgnd:nico/nvim-kickstarter`):
 - Local preference: enabled `format_on_save` whitelist for `lua`, `elixir`, `eelixir`, `heex`, `javascript`, `javascriptreact`, `typescript`, `typescriptreact`, `json`, `jsonc`, `yaml`; kept markdown disabled
 - Observed error: `vim.tbl_flatten is deprecated. Run ":checkhealth vim.deprecated" for more information`
 - Deferred: vim.pack migration
+
+## 2026-07-02 update: post-`cfdc17b` review (through `f0a2108`)
+
+| Upstream hash | Description | Relevant? | Risk | Notes |
+| --- | --- | --- | --- | --- |
+| ec3f448 (via 1f32074) | Switch from nvim-web-devicons to mini.icons | yes | low | Applied (adapted): mini.icons setup + `mock_nvim_web_devicons()` in mini.nvim block; devicons dependency dropped from snacks.lua |
+| f660e1f | Follow symlinks for the neovim config picker | yes | low | Applied (adapted): `follow = true` in the `<leader>sn` Snacks files picker; config dir is a symlink into dotfiles |
+| f0a2108 | Follow symlinks in the custom plugins loader | no | n/a | vim.pack-era manual loader; fork uses lazy.nvim `{ import = 'custom.plugins' }` and has no symlinks inside the config tree |
+| 7031a09 | Split `foundation` section into `options`/`keymaps` | no | n/a | Reorg of upstream's vim.pack-era init.lua layout |
+| ac51593 + 4e6bf94 + 97b3cbb | GitHub issue-template chores | no | n/a | Not applicable to a personal config fork |
+| 174b5fa | Migrate to vim.pack (merge) | no (for now) | high | Still deferred |
+
+### Execution log (2026-07-02)
+
+- Applied: `ec3f448` (mini.icons swap with devicons mock)
+- Applied: `f660e1f` (config picker `follow = true`)
+- Local cleanup: removed unused `lua/kickstart/plugins/neo-tree.lua` and its disabled require (replaced by snacks.explorer)
