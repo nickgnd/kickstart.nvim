@@ -2,9 +2,7 @@
 -- This plugin allows me to see the colors of hex code inside files
 
 return {
-  'norcalli/nvim-colorizer.lua',
+  'catgoose/nvim-colorizer.lua',
   event = 'VeryLazy',
-  config = function()
-    require('colorizer').setup()
-  end,
+  config = function() require('colorizer').setup() end,
 }
